@@ -87,6 +87,11 @@ public class JsonViewerAdapter extends BaseJsonViewerAdapter<JsonViewerAdapter.J
             } else {
                 handleJsonObject(key, value, itemView, false, 1); // 最后一组，结尾不需要逗号
             }
+            View.OnClickListener listener = itemView.getListener();
+            if (listener != null) {
+                listener.onClick(itemView);
+            }
+
         }
 
         if (mJSONArray != null) {
@@ -177,7 +182,6 @@ public class JsonViewerAdapter extends BaseJsonViewerAdapter<JsonViewerAdapter.J
             valueBuilder.setSpan(new ForegroundColorSpan(BRACES_COLOR), 0, valueBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             JsonItemClickListener jsonItemClickListener = new JsonItemClickListener(value, itemView, appendComma, hierarchy + 1);
             itemView.setIconClickListener(jsonItemClickListener);
-            jsonItemClickListener.onClick(itemView);
         } else if (value instanceof JSONArray) {
             itemView.showIcon(true);
             valueBuilder.append("Array[").append(String.valueOf(((JSONArray) value).length())).append("]");
@@ -187,7 +191,6 @@ public class JsonViewerAdapter extends BaseJsonViewerAdapter<JsonViewerAdapter.J
             valueBuilder.setSpan(new ForegroundColorSpan(BRACES_COLOR), len - 1, len, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             JsonItemClickListener jsonItemClickListener = new JsonItemClickListener(value, itemView, appendComma, hierarchy + 1);
             itemView.setIconClickListener(jsonItemClickListener);
-            jsonItemClickListener.onClick(itemView);
         } else if (value instanceof String) {
             itemView.hideIcon();
             valueBuilder.append("\"").append(value.toString()).append("\"");

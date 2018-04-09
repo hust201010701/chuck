@@ -24,6 +24,8 @@ public class JsonItemView extends LinearLayout {
     private TextView mTvLeft, mTvRight;
     private TextView mTvIcon;
 
+    OnClickListener mListener;
+
     public JsonItemView(Context context) {
         this(context, null);
     }
@@ -96,6 +98,7 @@ public class JsonItemView extends LinearLayout {
     }
 
     public void setIconClickListener(OnClickListener listener) {
+        this.mListener = listener;
         mTvIcon.setOnClickListener(listener);
     }
 
@@ -108,5 +111,9 @@ public class JsonItemView extends LinearLayout {
             }
         }
         addViewInLayout(child, -1, params);
+    }
+
+    public OnClickListener getListener() {
+        return mListener;
     }
 }
