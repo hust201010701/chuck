@@ -17,6 +17,8 @@ package com.readystatesoftware.chuck.internal.data;
 
 import android.net.Uri;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.readystatesoftware.chuck.internal.support.FormatUtils;
 import com.readystatesoftware.chuck.internal.support.JsonConvertor;
@@ -364,6 +366,49 @@ public class HttpTransaction {
             return FormatUtils.formatXml(body);
         } else {
             return body;
+        }
+    }
+
+    /**
+     * 是否疑似为json格式
+     * 有{}或者[]包围的数据
+     * @param isRequest  是请求还是响应？
+     * @return
+     */
+    public boolean isSuspectedJson(boolean isRequest) {
+        String body = "";
+        if (isRequest) {
+            if (requestContentType != null && requestContentType.toLowerCase().contains("json")) {
+                return true;
+            }
+
+            body = requestBody;
+        } else {
+            if (responseContentType != null && responseContentType.toLowerCase().contains("json")) {
+                return true;
+            }
+            body = responseBody;
+        }
+        if (body != null && ((body.startsWith("{") && body.endsWith("}")) ||
+                body.startsWith("[") && body.endsWith("]"))) {
+            // 解析json看看，是否会失败
+            try {
+                JsonParser jp = new JsonParser();
+                JsonElement je = jp.parse(body);
+                JsonConvertor.getInstance().toJson(je);
+            } catch (Exception e) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isImage(boolean isRequest) {
+        if (isRequest) {
+            return requestContentType == null ? false : requestContentType.contains("image");
+        } else {
+            return responseContentType == null ? false : responseContentType.contains("image");
         }
     }
 

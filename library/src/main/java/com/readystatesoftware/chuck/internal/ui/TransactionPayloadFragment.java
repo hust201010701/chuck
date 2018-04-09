@@ -15,6 +15,9 @@
  */
 package com.readystatesoftware.chuck.internal.ui;
 
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,8 +28,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
+import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.controller.ControllerListener;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.image.ImageInfo;
 import com.readystatesoftware.chuck.R;
 import com.readystatesoftware.chuck.internal.data.HttpTransaction;
+import com.yuyh.jsonviewer.library.JsonRecyclerView;
 
 public class TransactionPayloadFragment extends Fragment implements TransactionFragment {
 
@@ -37,6 +49,9 @@ public class TransactionPayloadFragment extends Fragment implements TransactionF
 
     TextView headers;
     TextView body;
+    JsonRecyclerView jsonBody;
+    SimpleDraweeView image;
+
 
     private int type;
     private HttpTransaction transaction;
@@ -64,7 +79,10 @@ public class TransactionPayloadFragment extends Fragment implements TransactionF
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chuck_fragment_transaction_payload, container, false);
         headers = (TextView) view.findViewById(R.id.headers);
+        jsonBody = (JsonRecyclerView) view.findViewById(R.id.jsonBody);
+        jsonBody.setTextSize(20);
         body = (TextView) view.findViewById(R.id.body);
+        image = (SimpleDraweeView) view.findViewById(R.id.image);
         return view;
     }
 
@@ -85,23 +103,85 @@ public class TransactionPayloadFragment extends Fragment implements TransactionF
             switch (type) {
                 case TYPE_REQUEST:
                     setText(transaction.getRequestHeadersString(true),
-                            transaction.getFormattedRequestBody(), transaction.requestBodyIsPlainText());
+                            transaction.getFormattedRequestBody(), transaction.requestBodyIsPlainText(), transaction.isSuspectedJson(true), transaction.isImage(true), transaction.getUrl());
                     break;
                 case TYPE_RESPONSE:
                     setText(transaction.getResponseHeadersString(true),
-                            transaction.getFormattedResponseBody(), transaction.responseBodyIsPlainText());
+                            transaction.getFormattedResponseBody(), transaction.responseBodyIsPlainText(), transaction.isSuspectedJson(false), transaction.isImage(false), transaction.getUrl());
                     break;
             }
         }
     }
 
-    private void setText(String headersString, String bodyString, boolean isPlainText) {
+    private void setText(String headersString, String bodyString, boolean isPlainText, boolean isJson, boolean isImage, String url) {
         headers.setVisibility((TextUtils.isEmpty(headersString) ? View.GONE : View.VISIBLE));
         headers.setText(Html.fromHtml(headersString));
         if (!isPlainText) {
-            body.setText(getString(R.string.chuck_body_omitted));
+            if (isImage) {
+                image.setVisibility(View.VISIBLE);
+                jsonBody.setVisibility(View.GONE);
+                body.setVisibility(View.GONE);
+
+                setAnimatedImageUriToFrescoView(image, Uri.parse(url));
+
+            } else {
+                image.setVisibility(View.GONE);
+                jsonBody.setVisibility(View.GONE);
+                body.setVisibility(View.VISIBLE);
+                body.setText(getString(R.string.chuck_body_omitted));
+            }
         } else {
-            body.setText(bodyString);
+            if (isJson) {
+                image.setVisibility(View.GONE);
+                jsonBody.setVisibility(View.VISIBLE);
+                body.setVisibility(View.GONE);
+                jsonBody.bindJson(bodyString);
+            } else {
+                image.setVisibility(View.GONE);
+                jsonBody.setVisibility(View.GONE);
+                body.setVisibility(View.VISIBLE);
+                body.setText(bodyString);
+            }
         }
     }
+
+
+    public boolean setAnimatedImageUriToFrescoView(final SimpleDraweeView sdv, Uri uri) {
+
+        BaseControllerListener<ImageInfo>  listener = new BaseControllerListener<ImageInfo>(){
+            @Override
+            public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
+                super.onFinalImageSet(id, imageInfo, animatable);
+                int width = imageInfo.getWidth();
+                int height = imageInfo.getHeight();
+                int viewWidth = getScreenWidth();
+                int viewHeight = (int) (1.0 * viewWidth * height / width);
+                ViewGroup.LayoutParams layoutParams = sdv.getLayoutParams();
+                layoutParams.width = viewWidth - 2 * dp2px(16);
+                layoutParams.height = viewHeight;
+                sdv.setLayoutParams(layoutParams);
+            }
+        };
+
+        DraweeController controller = ((PipelineDraweeControllerBuilder) ((PipelineDraweeControllerBuilder) ((PipelineDraweeControllerBuilder) Fresco
+                .newDraweeControllerBuilder()
+                .setControllerListener(listener))
+                .setOldController(sdv.getController()))
+                .setUri(uri)
+                .setAutoPlayAnimations(true))
+                .build();
+        sdv.setController(controller);
+        return true;
+
+    }
+
+    public int getScreenWidth() {
+        return this.getResources().getDisplayMetrics().widthPixels;
+    }
+
+    public int dp2px(int dp) {
+        float density = this.getResources().getDisplayMetrics().density;
+        return (int) (dp * density + 0.5);
+    }
+
 }
