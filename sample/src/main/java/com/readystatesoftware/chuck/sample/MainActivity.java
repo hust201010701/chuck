@@ -96,8 +96,11 @@ public class MainActivity extends AppCompatActivity {
 //        api.deny().enqueue(cb);
 //        api.cache("Mon").enqueue(cb);
 //        api.cache(30).enqueue(cb);
+
+
         api.zhuanzhuan("n_v2dd733dbdf21c4ba1a3b8630c5ccafa67.jpg").enqueue(cb);
         api.zhuanzhuan("n_v222c1d16c89a847b5a08f5afb16c663f6.jpg").enqueue(cb);
         api.zhihu().enqueue(cb);
+        api.github().enqueue(cb);
     }
 }

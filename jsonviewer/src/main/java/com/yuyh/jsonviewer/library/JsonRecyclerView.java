@@ -36,7 +36,12 @@ public class JsonRecyclerView extends RecyclerView {
     }
 
     private void initView() {
-        setLayoutManager(new LinearLayoutManager(getContext()));
+        setLayoutManager(new LinearLayoutManager(getContext()) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
     }
 
     public void bindJson(String jsonStr) {

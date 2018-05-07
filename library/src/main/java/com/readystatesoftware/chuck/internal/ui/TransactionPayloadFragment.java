@@ -53,7 +53,6 @@ public class TransactionPayloadFragment extends Fragment implements TransactionF
     TextView body;
     JsonRecyclerView jsonBody;
     SimpleDraweeView image;
-    HorizontalScrollView horizontalScrollView;
 
 
     private int type;
@@ -86,7 +85,6 @@ public class TransactionPayloadFragment extends Fragment implements TransactionF
         jsonBody.setTextSize(20);
         body = (TextView) view.findViewById(R.id.body);
         image = (SimpleDraweeView) view.findViewById(R.id.image);
-        horizontalScrollView = view.findViewById(R.id.horizontalScrollView);
         return view;
     }
 
@@ -123,26 +121,22 @@ public class TransactionPayloadFragment extends Fragment implements TransactionF
         if (!isPlainText) {
             if (isImage) {
                 image.setVisibility(View.VISIBLE);
-                horizontalScrollView.setVisibility(View.GONE);
                 body.setVisibility(View.GONE);
 
                 Utils.setAnimatedImageUriToFrescoView(image, Uri.parse(url), this.getContext(), false);
 
             } else {
                 image.setVisibility(View.GONE);
-                horizontalScrollView.setVisibility(View.GONE);
                 body.setVisibility(View.VISIBLE);
                 body.setText(getString(R.string.chuck_body_omitted));
             }
         } else {
             if (isJson) {
                 image.setVisibility(View.GONE);
-                horizontalScrollView.setVisibility(View.VISIBLE);
                 body.setVisibility(View.GONE);
                 jsonBody.bindJson(bodyString);
             } else {
                 image.setVisibility(View.GONE);
-                horizontalScrollView.setVisibility(View.GONE);
                 body.setVisibility(View.VISIBLE);
                 body.setText(bodyString);
             }

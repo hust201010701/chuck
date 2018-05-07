@@ -26,6 +26,9 @@ public class JsonItemView extends LinearLayout {
 
     OnClickListener mListener;
 
+    // 默认为展开状态，默认的展开状态是否赋值给view过了
+    private boolean mDefaultExpandHasBeenApplied = false;
+
     public JsonItemView(Context context) {
         this(context, null);
     }
@@ -60,6 +63,9 @@ public class JsonItemView extends LinearLayout {
         mTvRight.setTextSize(TEXT_SIZE_DP);
         mTvRight.setTextColor(BaseJsonViewerAdapter.BRACES_COLOR);
         mTvIcon.setTextSize(TEXT_SIZE_DP - 4);
+        mTvLeft.setTextIsSelectable(true);
+        mTvRight.setTextIsSelectable(true);
+        mDefaultExpandHasBeenApplied = false;
     }
 
     public void hideLeft() {
@@ -100,6 +106,17 @@ public class JsonItemView extends LinearLayout {
     public void setIconClickListener(OnClickListener listener) {
         this.mListener = listener;
         mTvIcon.setOnClickListener(listener);
+        if (!mDefaultExpandHasBeenApplied) {
+            if (mListener != null) {
+                // 执行一次点击事件
+                mListener.onClick(mTvIcon);
+            }
+            mDefaultExpandHasBeenApplied = true;
+        }
+    }
+
+    public TextView getTvIcon() {
+        return mTvIcon;
     }
 
     public void addViewNoInvalidate(View child) {

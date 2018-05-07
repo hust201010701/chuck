@@ -175,6 +175,7 @@ public class JsonViewerAdapter extends BaseJsonViewerAdapter<JsonViewerAdapter.J
     private void handleValue(Object value, JsonItemView itemView, boolean appendComma, int hierarchy) {
         SpannableStringBuilder valueBuilder = new SpannableStringBuilder();
         if (value instanceof Number) {
+            itemView.hideIcon();
             valueBuilder.append(value.toString());
             valueBuilder.setSpan(new ForegroundColorSpan(NUMBER_COLOR), 0, valueBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         } else if (value instanceof JSONObject) {
@@ -202,7 +203,11 @@ public class JsonViewerAdapter extends BaseJsonViewerAdapter<JsonViewerAdapter.J
             } else {
                 valueBuilder.setSpan(new ForegroundColorSpan(TEXT_COLOR), 0, valueBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-        } else if (valueBuilder.length() == 0 || value == null) {
+        } else if (value instanceof Boolean) {
+            itemView.hideIcon();
+            valueBuilder.append(value.toString());
+            valueBuilder.setSpan(new ForegroundColorSpan(NUMBER_COLOR), 0, valueBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } else if (value == null) {
             itemView.hideIcon();
             valueBuilder.append("null");
             valueBuilder.setSpan(new ForegroundColorSpan(NULL_COLOR), 0, valueBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

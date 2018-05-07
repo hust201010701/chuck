@@ -37,21 +37,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-
-            <HorizontalScrollView
-                android:id="@+id/horizontalScrollView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                >
-
             <com.yuyh.jsonviewer.library.JsonRecyclerView
                 android:id="@+id/jsonBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 />
-
-            </HorizontalScrollView>
 
             <TextView
                 android:id="@+id/body"

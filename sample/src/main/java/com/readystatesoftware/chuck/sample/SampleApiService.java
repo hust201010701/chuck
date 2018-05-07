@@ -100,6 +100,8 @@ class SampleApiService {
         Call<Void> zhuanzhuan(@Path("image") String image);
         @GET("https://news-at.zhihu.com/api/4/news/latest")
         Call<Void> zhihu();
+        @GET("http://gank.io/api/day/2015/08/07")
+        Call<Void> github();
 
 
     }
