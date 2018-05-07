@@ -1,4 +1,4 @@
-** Based On [Chuck](https://github.com/jgilfelt/chuck)**
+**Based On [Chuck](https://github.com/jgilfelt/chuck)**
 
 ## Advanced Features:
 
@@ -12,7 +12,7 @@
 中文版
 
 
-** 基于 [Chuck](https://github.com/jgilfelt/chuck) 定制**
+**基于 [Chuck](https://github.com/jgilfelt/chuck) 定制**
 
 ## 高级功能:
 
