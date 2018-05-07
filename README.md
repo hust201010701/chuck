@@ -7,6 +7,10 @@
 - Show Big Online Image When Response Is A Image In Response Tab
 
 
+--- 
+
+中文版
+
 
 ** 基于 [Chuck](https://github.com/jgilfelt/chuck) 定制**
 
