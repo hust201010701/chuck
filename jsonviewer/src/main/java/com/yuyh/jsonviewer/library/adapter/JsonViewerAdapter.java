@@ -87,10 +87,6 @@ public class JsonViewerAdapter extends BaseJsonViewerAdapter<JsonViewerAdapter.J
             } else {
                 handleJsonObject(key, value, itemView, false, 1); // 最后一组，结尾不需要逗号
             }
-            View.OnClickListener listener = itemView.getListener();
-            if (listener != null) {
-                listener.onClick(itemView);
-            }
 
         }
 
@@ -113,6 +109,11 @@ public class JsonViewerAdapter extends BaseJsonViewerAdapter<JsonViewerAdapter.J
             } else {
                 handleJsonArray(value, itemView, false, 1); // 最后一组，结尾不需要逗号
             }
+
+        }
+        View.OnClickListener listener = itemView.getListener();
+        if (listener != null) {
+            listener.onClick(itemView);
         }
     }
 

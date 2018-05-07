@@ -26,6 +26,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -37,6 +38,7 @@ import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.image.ImageInfo;
 import com.readystatesoftware.chuck.R;
+import com.readystatesoftware.chuck.internal.Utils;
 import com.readystatesoftware.chuck.internal.data.HttpTransaction;
 import com.yuyh.jsonviewer.library.JsonRecyclerView;
 
@@ -51,6 +53,7 @@ public class TransactionPayloadFragment extends Fragment implements TransactionF
     TextView body;
     JsonRecyclerView jsonBody;
     SimpleDraweeView image;
+    HorizontalScrollView horizontalScrollView;
 
 
     private int type;
@@ -83,6 +86,7 @@ public class TransactionPayloadFragment extends Fragment implements TransactionF
         jsonBody.setTextSize(20);
         body = (TextView) view.findViewById(R.id.body);
         image = (SimpleDraweeView) view.findViewById(R.id.image);
+        horizontalScrollView = view.findViewById(R.id.horizontalScrollView);
         return view;
     }
 
@@ -119,26 +123,26 @@ public class TransactionPayloadFragment extends Fragment implements TransactionF
         if (!isPlainText) {
             if (isImage) {
                 image.setVisibility(View.VISIBLE);
-                jsonBody.setVisibility(View.GONE);
+                horizontalScrollView.setVisibility(View.GONE);
                 body.setVisibility(View.GONE);
 
-                setAnimatedImageUriToFrescoView(image, Uri.parse(url));
+                Utils.setAnimatedImageUriToFrescoView(image, Uri.parse(url), this.getContext(), false);
 
             } else {
                 image.setVisibility(View.GONE);
-                jsonBody.setVisibility(View.GONE);
+                horizontalScrollView.setVisibility(View.GONE);
                 body.setVisibility(View.VISIBLE);
                 body.setText(getString(R.string.chuck_body_omitted));
             }
         } else {
             if (isJson) {
                 image.setVisibility(View.GONE);
-                jsonBody.setVisibility(View.VISIBLE);
+                horizontalScrollView.setVisibility(View.VISIBLE);
                 body.setVisibility(View.GONE);
                 jsonBody.bindJson(bodyString);
             } else {
                 image.setVisibility(View.GONE);
-                jsonBody.setVisibility(View.GONE);
+                horizontalScrollView.setVisibility(View.GONE);
                 body.setVisibility(View.VISIBLE);
                 body.setText(bodyString);
             }
@@ -146,42 +150,6 @@ public class TransactionPayloadFragment extends Fragment implements TransactionF
     }
 
 
-    public boolean setAnimatedImageUriToFrescoView(final SimpleDraweeView sdv, Uri uri) {
 
-        BaseControllerListener<ImageInfo>  listener = new BaseControllerListener<ImageInfo>(){
-            @Override
-            public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
-                super.onFinalImageSet(id, imageInfo, animatable);
-                int width = imageInfo.getWidth();
-                int height = imageInfo.getHeight();
-                int viewWidth = getScreenWidth();
-                int viewHeight = (int) (1.0 * viewWidth * height / width);
-                ViewGroup.LayoutParams layoutParams = sdv.getLayoutParams();
-                layoutParams.width = viewWidth - 2 * dp2px(16);
-                layoutParams.height = viewHeight;
-                sdv.setLayoutParams(layoutParams);
-            }
-        };
-
-        DraweeController controller = ((PipelineDraweeControllerBuilder) ((PipelineDraweeControllerBuilder) ((PipelineDraweeControllerBuilder) Fresco
-                .newDraweeControllerBuilder()
-                .setControllerListener(listener))
-                .setOldController(sdv.getController()))
-                .setUri(uri)
-                .setAutoPlayAnimations(true))
-                .build();
-        sdv.setController(controller);
-        return true;
-
-    }
-
-    public int getScreenWidth() {
-        return this.getResources().getDisplayMetrics().widthPixels;
-    }
-
-    public int dp2px(int dp) {
-        float density = this.getResources().getDisplayMetrics().density;
-        return (int) (dp * density + 0.5);
-    }
 
 }

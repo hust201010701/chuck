@@ -96,5 +96,11 @@ class SampleApiService {
         Call<Void> cache(@Header("If-Modified-Since") String ifModifiedSince);
         @GET("/cache/{seconds}")
         Call<Void> cache(@Path("seconds") int seconds);
+        @GET("http://pic1.58cdn.com.cn/zhuanzh/{image}?w=750&h=0")
+        Call<Void> zhuanzhuan(@Path("image") String image);
+        @GET("https://news-at.zhihu.com/api/4/news/latest")
+        Call<Void> zhihu();
+
+
     }
 }

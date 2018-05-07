@@ -24,6 +24,23 @@ android {
     }
 }
 
+
+buildscript {
+    repositories {
+        maven {
+            url "file:///Users/zhuanzhuan/LocalRepository"
+        }
+    }
+}
+
+allprojects {
+    repositories {
+        maven {
+            url "file:///Users/zhuanzhuan/LocalRepository"
+        }
+    }
+}
+
 dependencies {
     debugCompile project(':library')
     releaseCompile project(':library-no-op')

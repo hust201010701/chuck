@@ -45,6 +45,7 @@ public class HttpTransaction {
             "requestDate",
             "tookMs",
             "method",
+            "url",
             "host",
             "path",
             "scheme",
@@ -405,6 +406,9 @@ public class HttpTransaction {
     }
 
     public boolean isImage(boolean isRequest) {
+        if (url != null && (url.contains(".jpg") || url.contains(".png") || url.contains(".gif") || url.contains(".webp"))) {
+            return true;
+        }
         if (isRequest) {
             return requestContentType == null ? false : requestContentType.contains("image");
         } else {

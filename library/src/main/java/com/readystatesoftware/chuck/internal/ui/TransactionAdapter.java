@@ -17,6 +17,7 @@ package com.readystatesoftware.chuck.internal.ui;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.widget.RecyclerView;
@@ -26,7 +27,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.readystatesoftware.chuck.R;
+import com.readystatesoftware.chuck.internal.Utils;
 import com.readystatesoftware.chuck.internal.data.HttpTransaction;
 import com.readystatesoftware.chuck.internal.data.LocalCupboard;
 import com.readystatesoftware.chuck.internal.ui.TransactionListFragment.OnListFragmentInteractionListener;
@@ -71,6 +74,12 @@ class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHol
                 holder.host.setText(transaction.getHost());
                 holder.start.setText(transaction.getRequestStartTimeString());
                 holder.ssl.setVisibility(transaction.isSsl() ? View.VISIBLE : View.GONE);
+                if (transaction.isImage(false)) {
+                    holder.image.setVisibility(View.VISIBLE);
+                    Utils.setAnimatedImageUriToFrescoView(holder.image, Uri.parse(transaction.getUrl()), TransactionAdapter.this.context, true);
+                } else {
+                    holder.image.setVisibility(View.GONE);
+                }
                 if (transaction.getStatus() == HttpTransaction.Status.Complete) {
                     holder.code.setText(String.valueOf(transaction.getResponseCode()));
                     holder.duration.setText(transaction.getDurationString());
@@ -143,6 +152,7 @@ class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHol
         public final TextView code;
         public final TextView path;
         public final TextView host;
+        public final SimpleDraweeView image;
         public final TextView start;
         public final TextView duration;
         public final TextView size;
@@ -159,6 +169,7 @@ class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHol
             duration = (TextView) view.findViewById(R.id.duration);
             size = (TextView) view.findViewById(R.id.size);
             ssl = (ImageView) view.findViewById(R.id.ssl);
+            image = (SimpleDraweeView) view.findViewById(R.id.image);
         }
     }
 }
